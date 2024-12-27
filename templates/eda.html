@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exploratory Data Analysis (EDA)</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light gray background */
+        }
+
+        .header {
+            background-color: #360568; /* Dark purple */
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        .btn-primary {
+            background-color: #9AC6C5; /* Teal */
+            border-color: #9AC6C5;
+            color: #360568; /* Dark Purple */
+        }
+
+        .btn-primary:hover {
+            background-color: #A5E6BA; /* Light Green */
+            border-color: #A5E6BA;
+            color: #360568;
+        }
+
+        .btn-secondary {
+            background-color: #5B2A86; /* Purple */
+            border-color: #5B2A86;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #360568; /* Dark Purple */
+            border-color: #360568;
+            color: white;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #842029;
+            padding: 10px;
+            border: 1px solid #f5c2c7;
+            border-radius: 5px;
+        }
+
+        .dataset-section {
+            margin-top: 20px;
+        }
+
+        .visualizations img {
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- Header -->
+        <div class="header">
+            <h1>Exploratory Data Analysis (EDA)</h1>
+            <p>Upload datasets to analyze and visualize trends and patterns.</p>
+        </div>
+
+        <!-- File Upload Form -->
+        <form method="POST" enctype="multipart/form-data" class="mt-4">
+            <div class="form-group">
+                <label for="datasets">Upload Datasets (CSV):</label>
+                <input type="file" name="datasets" id="datasets" class="form-control" multiple required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Analyze</button>
+        </form>
+
+        <!-- Back to Home Button -->
+        <a href="/" class="btn btn-secondary mt-4">Back to Home</a>
+
+        <!-- Error Message -->
+        {% if error %}
+        <div class="error-message mt-4">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- Dataset Summaries -->
+        {% if datasets %}
+        <h3 class="mt-5">Dataset Summaries</h3>
+        {% for name, details in datasets.items() %}
+        <div class="dataset-section">
+            <h4 class="mt-4">{{ name }}</h4>
+            <p><strong>Number of Rows:</strong> {{ details.info.rows }}</p>
+            <p><strong>Number of Columns:</strong> {{ details.info.columns }}</p>
+            <p><strong>Columns:</strong> {{ details.info.columns_list }}</p>
+
+            <!-- Dataset Preview -->
+            <h5>Dataset Preview</h5>
+            <div class="table-responsive">
+                {{ details.head | safe }}
+            </div>
+
+            <!-- Dataset Statistics -->
+            <h5 class="mt-4">Statistics</h5>
+            <div class="table-responsive">
+                {{ details.stats | safe }}
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <!-- Visualizations -->
+        {% if plots %}
+        <h3 class="mt-5">Visualizations</h3>
+        <div class="visualizations">
+            {% for plot in plots %}
+            <img src="{{ plot }}" class="img-fluid mt-3" alt="Visualization">
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

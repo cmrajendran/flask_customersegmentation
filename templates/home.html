@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Segmentation App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* General styles */
+        body {
+            background-color: #7785AC; /* Gray-Blue */
+            color: #fff;
+        }
+
+        /* Header styles */
+        .header {
+            background-color: #360568; /* Dark Purple */
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        /* Card styles */
+        .card {
+            margin-top: 20px;
+            background-color: #5B2A86; /* Purple */
+            color: white;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h5 {
+            font-weight: bold;
+        }
+
+        /* Button styles */
+        .btn {
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: #9AC6C5; /* Teal */
+            border-color: #9AC6C5;
+            color: #360568; /* Text color */
+        }
+
+        .btn-primary:hover {
+            background-color: #A5E6BA; /* Light Green */
+            border-color: #A5E6BA;
+            color: #360568;
+        }
+
+        /* Footer styles */
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #360568; /* Dark Purple */
+            background-color: #A5E6BA; /* Light Green */
+            padding: 10px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- Header -->
+        <div class="header">
+            <h1>Welcome to the Customer Segmentation App</h1>
+            <p>Discover insights through exploratory data analysis and segmentation.</p>
+        </div>
+
+        <!-- Navigation Options -->
+        <div class="row justify-content-center mt-5">
+            <!-- EDA Section -->
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Exploratory Data Analysis (EDA)</h5>
+                        <p class="card-text">Upload and analyze datasets to uncover trends and patterns.</p>
+                        <a href="/eda" class="btn btn-primary btn-block">Go to EDA</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Segmentation Section -->
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Customer Segmentation</h5>
+                        <p class="card-text">Perform clustering and visualize customer groups for insights.</p>
+                        <a href="/segmentation" class="btn btn-primary btn-block">Go to Segmentation</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>&copy; 2024 Customer Segmentation App. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

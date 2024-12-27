@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Segmentation</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light gray background */
+        }
+
+        .header {
+            background-color: #360568; /* Dark purple */
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        .btn-primary {
+            background-color: #9AC6C5; /* Teal */
+            border-color: #9AC6C5;
+            color: #360568; /* Dark Purple */
+        }
+
+        .btn-primary:hover {
+            background-color: #A5E6BA; /* Light Green */
+            border-color: #A5E6BA;
+            color: #360568;
+        }
+
+        .btn-secondary {
+            background-color: #5B2A86; /* Purple */
+            border-color: #5B2A86;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #360568; /* Dark Purple */
+            border-color: #360568;
+            color: white;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #842029;
+            padding: 10px;
+            border: 1px solid #f5c2c7;
+            border-radius: 5px;
+        }
+
+        .result-section {
+            margin-top: 20px;
+        }
+
+        .visualizations img {
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- Header -->
+        <div class="header">
+            <h1>Customer Segmentation</h1>
+            <p>Upload the dataset and pre-trained model to perform segmentation.</p>
+        </div>
+
+        <!-- File Upload Form -->
+        <form method="POST" enctype="multipart/form-data" class="mt-4">
+            <div class="form-group">
+                <label for="rfm_file">Upload RFM Dataset (CSV):</label>
+                <input type="file" name="rfm_file" id="rfm_file" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="kmeans_file">Upload Pre-Trained KMeans Model (Pickle):</label>
+                <input type="file" name="kmeans_file" id="kmeans_file" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Analyze</button>
+        </form>
+
+        <!-- Back to Home Button -->
+        <a href="/" class="btn btn-secondary mt-4">Back to Home</a>
+
+        <!-- Error Message -->
+        {% if error %}
+        <div class="error-message mt-4">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- Cluster Analysis -->
+        {% if cluster_analysis %}
+        <h3 class="mt-5">Clustering Analysis</h3>
+        <div class="table-responsive">
+            {{ cluster_analysis | safe }}
+        </div>
+        {% endif %}
+
+        <!-- Processed Dataset -->
+        {% if processed_data %}
+        <h3 class="mt-5">Clustered Dataset</h3>
+        <div class="table-responsive">
+            {{ processed_data | safe }}
+        </div>
+        {% endif %}
+
+        <!-- Visualizations -->
+        {% if scatter_plot %}
+        <h3 class="mt-5">Cluster Visualization</h3>
+        <img src="{{ scatter_plot }}" class="img-fluid mt-3" alt="Cluster Visualization">
+        {% endif %}
+    </div>
+</body>
+</html>
