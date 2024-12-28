@@ -5,6 +5,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
+import pickle
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+
 
 app = Flask(__name__)
 
@@ -48,7 +53,14 @@ def segmentation():
             df_rfm_cleaned["segments"] = cluster_labels
 
             # Perform analysis
-            cluster_analysis = df_rfm_cleaned.groupby("segments").mean().to_html(classes="table table-striped")
+            # Perform cluster analysis
+            numeric_columns = df_rfm_cleaned.select_dtypes(include=["number"]).columns
+            cluster_analysis = (
+                df_rfm_cleaned.groupby("segments")[numeric_columns]
+                .mean()
+                .to_html(classes="table table-striped")
+            )
+
 
             # Generate scatter plot for visualization
             pca = PCA(n_components=2)
