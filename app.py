@@ -52,7 +52,6 @@ def segmentation():
             cluster_labels = kmeans.predict(features_scaled)
             df_rfm_cleaned["segments"] = cluster_labels
 
-            # Perform analysis
             # Perform cluster analysis
             numeric_columns = df_rfm_cleaned.select_dtypes(include=["number"]).columns
             cluster_analysis = (
@@ -61,38 +60,50 @@ def segmentation():
                 .to_html(classes="table table-striped")
             )
 
+            # Generate pie chart for segment percentages
+            segment_counts = df_rfm_cleaned["segments"].value_counts()
+            segment_percentages = (segment_counts / segment_counts.sum()) * 100
 
-            # Generate scatter plot for visualization
-            pca = PCA(n_components=2)
-            features_pca = pca.fit_transform(features_scaled)
-            df_rfm_cleaned["pca_x"] = features_pca[:, 0]
-            df_rfm_cleaned["pca_y"] = features_pca[:, 1]
-
-            plt.figure(figsize=(10, 6))
-            sns.scatterplot(
-                data=df_rfm_cleaned, x="pca_x", y="pca_y", hue="segments", palette="viridis", s=100
+            plt.figure(figsize=(8, 8))
+            plt.pie(
+                segment_percentages,
+                labels=segment_counts.index,
+                autopct='%1.1f%%',
+                startangle=140,
+                colors=sns.color_palette("viridis", len(segment_counts)),
             )
-            plt.title("Customer Segments (PCA Reduced)", fontsize=16)
-            plt.xlabel("PCA 1", fontsize=12)
-            plt.ylabel("PCA 2", fontsize=12)
-            plt.legend(title="Segments")
+            plt.title("Clustered Segments by Percentage", fontsize=16)
             plt.tight_layout()
 
-            scatter_plot_path = os.path.join(app.config["UPLOAD_FOLDER"], "cluster_scatter_plot.png")
-            plt.savefig(scatter_plot_path)
+            # Save pie chart
+            pie_chart_path = os.path.join(app.config["UPLOAD_FOLDER"], "cluster_pie_chart.png")
+            plt.savefig(pie_chart_path)
             plt.close()
+
+            # Select 20 random customers and prepare for download
+            sample_customers = df_rfm_cleaned.sample(n=20, random_state=42)[["customer_id", "segments"]]
+            download_csv_path = os.path.join(app.config["UPLOAD_FOLDER"], "sample_customers.csv")
+            sample_customers.to_csv(download_csv_path, index=False)
+
+            # Select 5 customers for display
+            display_customers = sample_customers.head(5)
 
             # Render results
             return render_template(
                 "segmentation.html",
                 cluster_analysis=cluster_analysis,
-                processed_data=df_rfm_cleaned.head(20).to_html(classes="table table-striped"),
-                scatter_plot=f"static/cluster_scatter_plot.png",
+                processed_data=display_customers.to_html(classes="table table-striped", index=False),
+                download_csv_path="static/sample_customers.csv",
+                pie_chart="static/cluster_pie_chart.png",
             )
         except Exception as e:
             return render_template("segmentation.html", error=f"An error occurred: {str(e)}")
 
     return render_template("segmentation.html")
+
+
+
+
 
 
 # EDA Section

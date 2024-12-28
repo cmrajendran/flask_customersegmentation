@@ -7,11 +7,11 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
-            background-color: #f8f9fa; /* Light gray background */
+            background-color: #f8f9fa;
         }
 
         .header {
-            background-color: #360568; /* Dark purple */
+            background-color: #360568;
             color: white;
             padding: 20px;
             text-align: center;
@@ -19,54 +19,42 @@
         }
 
         .btn-primary {
-            background-color: #9AC6C5; /* Teal */
+            background-color: #9AC6C5;
             border-color: #9AC6C5;
-            color: #360568; /* Dark Purple */
+            color: #360568;
         }
 
         .btn-primary:hover {
-            background-color: #A5E6BA; /* Light Green */
+            background-color: #A5E6BA;
             border-color: #A5E6BA;
             color: #360568;
         }
 
         .btn-secondary {
-            background-color: #5B2A86; /* Purple */
+            background-color: #5B2A86;
             border-color: #5B2A86;
             color: white;
         }
 
         .btn-secondary:hover {
-            background-color: #360568; /* Dark Purple */
+            background-color: #360568;
             border-color: #360568;
             color: white;
         }
 
-        .error-message {
-            background-color: #f8d7da;
-            color: #842029;
-            padding: 10px;
-            border: 1px solid #f5c2c7;
-            border-radius: 5px;
+        .container {
+            margin-top: 50px;
         }
 
-        .result-section {
+        .table {
             margin-top: 20px;
-        }
-
-        .visualizations img {
-            margin-top: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <!-- Header -->
+    <div class="container">
         <div class="header">
             <h1>Customer Segmentation</h1>
-            <p>Upload the cleaned dataset with RFM feature and pre-trained model to perform segmentation.</p>
         </div>
 
         <!-- File Upload Form -->
@@ -82,17 +70,14 @@
             <button type="submit" class="btn btn-primary btn-block">Analyze</button>
         </form>
 
-        <!-- Back to Home Button -->
-        <a href="/" class="btn btn-secondary mt-4">Back to Home</a>
-
         <!-- Error Message -->
         {% if error %}
-        <div class="error-message mt-4">
+        <div class="alert alert-danger mt-4">
             {{ error }}
         </div>
         {% endif %}
 
-        <!-- Cluster Analysis -->
+        <!-- Clustering Analysis -->
         {% if cluster_analysis %}
         <h3 class="mt-5">Clustering Analysis</h3>
         <div class="table-responsive">
@@ -100,18 +85,21 @@
         </div>
         {% endif %}
 
-        <!-- Processed Dataset -->
-        {% if processed_data %}
-        <h3 class="mt-5">Clustered Dataset</h3>
-        <div class="table-responsive">
-            {{ processed_data | safe }}
+        <!-- Pie Chart Visualization -->
+        {% if pie_chart %}
+        <div class="pie-chart mt-5">
+            <h3>Clustered Segments by Percentage</h3>
+            <img src="{{ pie_chart }}" class="img-fluid mt-3" alt="Cluster Pie Chart">
         </div>
         {% endif %}
 
-        <!-- Visualizations -->
-        {% if scatter_plot %}
-        <h3 class="mt-5">Cluster Visualization</h3>
-        <img src="{{ scatter_plot }}" class="img-fluid mt-3" alt="Cluster Visualization">
+        <!-- Processed Dataset -->
+        {% if processed_data %}
+        <h3 class="mt-5">Sample Processed Dataset (Top 5 Customers)</h3>
+        <div class="table-responsive">
+            {{ processed_data | safe }}
+        </div>
+        <a href="{{ download_csv_path }}" class="btn btn-secondary mt-3" download>Download Full Sample (20 Customers)</a>
         {% endif %}
     </div>
 </body>
