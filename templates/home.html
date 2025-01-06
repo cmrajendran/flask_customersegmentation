@@ -21,18 +21,34 @@
             border-radius: 10px;
         }
 
+        /* Card container styles */
+        .card-container {
+            margin-top: 30px;
+        }
+
         /* Card styles */
         .card {
-            margin-top: 20px;
+            margin: 20px 0;
             background-color: #5B2A86; /* Purple */
             color: white;
             border: none;
             border-radius: 10px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
         }
 
         .card h5 {
             font-weight: bold;
+        }
+
+        .card-text {
+            font-size: 0.9rem;
         }
 
         /* Button styles */
@@ -68,14 +84,14 @@
     <div class="container mt-5">
         <!-- Header -->
         <div class="header">
-            <h1>E-Commerce Customer Segmentation App</h1>
+            <h1>Data Driven Marketing</h1>
             <p>Discover insights through exploratory data analysis and customer segmentation.</p>
         </div>
 
-        <!-- Navigation Options -->
-        <div class="row justify-content-center mt-5">
+        <!-- Card Container -->
+        <div class="card-container row justify-content-center">
             <!-- EDA Section -->
-            <div class="col-md-4">
+            <div class="col-lg-4 col-md-6">
                 <div class="card text-center">
                     <div class="card-body">
                         <h5 class="card-title">Exploratory Data Analysis (EDA)</h5>
@@ -85,12 +101,23 @@
                 </div>
             </div>
 
-            <!-- Segmentation Section -->
-            <div class="col-md-4">
+            <!-- RFM Dataset Section -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">RFM Dataset Generation</h5>
+                        <p class="card-text">Generate RFM datasets from raw data to analyze customer behavior.</p>
+                        <a href="/rfm" class="btn btn-primary btn-block">Go to RFM</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Segmentation Section -->
+            <div class="col-lg-4 col-md-6">
                 <div class="card text-center">
                     <div class="card-body">
                         <h5 class="card-title">Customer Segmentation</h5>
-                        <p class="card-text">Perform clustering and identify customer segment to take business action.</p>
+                        <p class="card-text">Perform clustering and identify customer segments to take business actions.</p>
                         <a href="/segmentation" class="btn btn-primary btn-block">Go to Segmentation</a>
                     </div>
                 </div>

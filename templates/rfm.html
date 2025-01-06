@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exploratory Data Analysis (EDA)</title>
+    <title>RFM Analysis</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         /* General styles */
@@ -51,20 +51,17 @@
             color: white;
         }
 
-        /* Error message styles */
-        .error-message {
-            background-color: #f8d7da;
-            color: #842029;
-            padding: 10px;
-            border: 1px solid #f5c2c7;
-            border-radius: 5px;
+        /* Table and content styles */
+        .table-responsive {
+            margin-top: 20px;
         }
 
-        /* Visualization styles */
-        .visualizations img {
-            margin-top: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #842029;
+            border: 1px solid #f5c2c7;
+            border-radius: 5px;
+            padding: 10px;
         }
     </style>
 </head>
@@ -72,17 +69,17 @@
     <div class="container mt-5">
         <!-- Header -->
         <div class="header">
-            <h1>Exploratory Data Analysis (EDA)</h1>
-            <p>Upload raw datasets to analyze and visualize trends and patterns.</p>
+            <h1>RFM Analysis</h1>
+            <p>Generate and analyze RFM metrics to segment customers based on their behavior.</p>
         </div>
 
         <!-- File Upload Form -->
         <form method="POST" enctype="multipart/form-data" class="mt-4">
             <div class="form-group">
-                <label for="datasets">Upload Datasets (CSV):</label>
-                <input type="file" name="datasets" id="datasets" class="form-control-file" multiple required>
+                <label for="csv_file">Upload Transaction Data (CSV):</label>
+                <input type="file" name="csv_file" id="csv_file" class="form-control-file" accept=".csv" required>
             </div>
-            <button type="submit" class="btn btn-primary btn-block">Analyze</button>
+            <button type="submit" class="btn btn-primary btn-block">Generate RFM</button>
         </form>
 
         <!-- Back to Home Button -->
@@ -90,43 +87,16 @@
 
         <!-- Error Message -->
         {% if error %}
-        <div class="error-message mt-4">
+        <div class="alert alert-danger mt-4">
             {{ error }}
         </div>
         {% endif %}
 
-        <!-- Dataset Summaries -->
-        {% if datasets %}
-        <h3 class="mt-5">Dataset Summaries</h3>
-        {% for name, details in datasets.items() %}
-        <div class="dataset-section">
-            <h4 class="mt-4">{{ name }}</h4>
-            <p><strong>Number of Rows:</strong> {{ details.info.rows }}</p>
-            <p><strong>Number of Columns:</strong> {{ details.info.columns }}</p>
-            <p><strong>Columns:</strong> {{ details.info.columns_list }}</p>
-
-            <!-- Dataset Preview -->
-            <h5>Dataset Preview</h5>
-            <div class="table-responsive">
-                {{ details.head | safe }}
-            </div>
-
-            <!-- Dataset Statistics -->
-            <h5 class="mt-4">Statistics</h5>
-            <div class="table-responsive">
-                {{ details.stats | safe }}
-            </div>
-        </div>
-        {% endfor %}
-        {% endif %}
-
-        <!-- Visualizations -->
-        {% if plots %}
-        <h3 class="mt-5">Visualizations</h3>
-        <div class="visualizations">
-            {% for plot in plots %}
-            <img src="{{ plot }}" class="img-fluid mt-3" alt="Visualization">
-            {% endfor %}
+        <!-- RFM Results -->
+        {% if rfm_data %}
+        <h3 class="mt-5">RFM Dataset</h3>
+        <div class="table-responsive">
+            {{ rfm_data | safe }}
         </div>
         {% endif %}
     </div>

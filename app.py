@@ -169,5 +169,94 @@ def eda():
     return render_template("eda.html")
 
 
+
+#RFM
+@app.route("/rfm", methods=["GET", "POST"])
+def rfm():
+    if request.method == "POST":
+        # Retrieve the uploaded CSV files
+        customers_file = request.files.get("customers_file")
+        payments_file = request.files.get("payments_file")
+        orders_file = request.files.get("orders_file")
+
+        if not customers_file or not payments_file or not orders_file:
+            return render_template("rfm.html", error="Please upload all required CSV files: customers, payments, and orders.")
+
+        try:
+            # Load datasets
+            customers = pd.read_csv(customers_file)
+            payments = pd.read_csv(payments_file)
+            orders = pd.read_csv(orders_file)
+
+            # Convert date columns into datetime format
+            date_cols = [
+                'order_purchase_timestamp',
+                'order_approved_at',
+                'order_delivered_carrier_date',
+                'order_delivered_customer_date',
+                'order_estimated_delivery_date'
+            ]
+            for col in date_cols:
+                if col in orders.columns:
+                    orders[col] = pd.to_datetime(orders[col], errors="coerce")
+
+            # Merge datasets
+            order_customers = orders.merge(customers, on="customer_id", how="inner")
+            df_complete = order_customers.merge(payments, on="order_id", how="inner")
+
+            # Filter for delivered orders
+            df_complete = df_complete[df_complete["order_status"] == "delivered"]
+
+            # Drop unnecessary columns
+            columns_to_drop = ["order_status", "order_purchase_timestamp"]
+            df_full = df_complete.drop(columns=[col for col in columns_to_drop if col in df_complete.columns])
+
+            # Calculate Recency
+            max_date = df_full["order_approved_at"].max()
+            recency_df = df_full.groupby("customer_id")["order_approved_at"].max().reset_index()
+            recency_df["recency"] = (max_date - recency_df["order_approved_at"]).dt.days
+
+            # Calculate Frequency
+            frequency_df = df_full.groupby("customer_id")["order_id"].nunique().reset_index()
+            frequency_df = frequency_df.rename(columns={"order_id": "frequency"})
+
+            # Calculate Monetary Value
+            monetary_df = df_full.groupby("customer_id")["payment_value"].sum().reset_index()
+            monetary_df = monetary_df.rename(columns={"payment_value": "monetary"})
+
+            # Merge Recency, Frequency, and Monetary dataframes
+            rfm_df = recency_df.merge(frequency_df, on="customer_id").merge(monetary_df, on="customer_id")
+
+            # Drop the `order_approved_at` column and missing values
+            rfm_cleaned = rfm_df.drop(columns=["order_approved_at"]).dropna()
+
+            # Save the cleaned RFM dataset
+            rfm_cleaned_path = os.path.join(app.config["UPLOAD_FOLDER"], "rfm_cleaned.csv")
+            rfm_cleaned.to_csv(rfm_cleaned_path, index=False)
+
+            # Display the current RFM preview with `customer_id`
+            rfm_preview = rfm_cleaned.head(5)
+
+            # Drop the `customer_id` column for the new preview
+            rfm_no_id = rfm_cleaned.drop(columns=["customer_id"]).head(5)
+
+            # Render the results
+            return render_template(
+                "rfm.html",
+                message="RFM dataset successfully created and saved.",
+                rfm_data=rfm_preview.to_html(classes="table table-striped"),
+                rfm_no_id_data=rfm_no_id.to_html(classes="table table-striped"),
+                download_csv_path="static/rfm_cleaned.csv"
+            )
+
+        except Exception as e:
+            # Handle exceptions and return meaningful error messages
+            return render_template("rfm.html", error=f"An error occurred: {str(e)}")
+
+    return render_template("rfm.html")
+
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)

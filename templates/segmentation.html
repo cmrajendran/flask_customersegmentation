@@ -6,69 +6,88 @@
     <title>Customer Segmentation</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
+        /* General styles */
         body {
-            background-color: #f8f9fa;
+            background-color: #7785AC; /* Gray-Blue */
+            color: #fff;
         }
 
+        /* Header styles */
         .header {
-            background-color: #360568;
+            background-color: #360568; /* Dark Purple */
             color: white;
             padding: 20px;
             text-align: center;
             border-radius: 10px;
         }
 
+        /* Button styles */
+        .btn {
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
         .btn-primary {
-            background-color: #9AC6C5;
+            background-color: #9AC6C5; /* Teal */
             border-color: #9AC6C5;
-            color: #360568;
+            color: #360568; /* Text color */
         }
 
         .btn-primary:hover {
-            background-color: #A5E6BA;
+            background-color: #A5E6BA; /* Light Green */
             border-color: #A5E6BA;
             color: #360568;
         }
 
         .btn-secondary {
-            background-color: #5B2A86;
+            background-color: #5B2A86; /* Purple */
             border-color: #5B2A86;
             color: white;
         }
 
         .btn-secondary:hover {
-            background-color: #360568;
+            background-color: #360568; /* Dark Purple */
             border-color: #360568;
             color: white;
         }
 
-        .container {
-            margin-top: 50px;
+        /* Table and content styles */
+        .table-responsive {
+            margin-top: 20px;
         }
 
-        .table {
-            margin-top: 20px;
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #842029;
+            border: 1px solid #f5c2c7;
+            border-radius: 5px;
+            padding: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container mt-5">
+        <!-- Header -->
         <div class="header">
             <h1>Customer Segmentation</h1>
+            <p>Upload your RFM dataset and pre-trained KMeans model to analyze customer segments.</p>
         </div>
 
         <!-- File Upload Form -->
         <form method="POST" enctype="multipart/form-data" class="mt-4">
             <div class="form-group">
                 <label for="rfm_file">Upload RFM Dataset (CSV):</label>
-                <input type="file" name="rfm_file" id="rfm_file" class="form-control" required>
+                <input type="file" name="rfm_file" id="rfm_file" class="form-control-file" accept=".csv" required>
             </div>
             <div class="form-group">
                 <label for="kmeans_file">Upload Pre-Trained KMeans Model (Pickle):</label>
-                <input type="file" name="kmeans_file" id="kmeans_file" class="form-control" required>
+                <input type="file" name="kmeans_file" id="kmeans_file" class="form-control-file" accept=".pkl" required>
             </div>
             <button type="submit" class="btn btn-primary btn-block">Analyze</button>
         </form>
+
+        <!-- Back to Home Button -->
+        <a href="/" class="btn btn-secondary mt-4 btn-block">Back to Home</a>
 
         <!-- Error Message -->
         {% if error %}
@@ -99,7 +118,7 @@
         <div class="table-responsive">
             {{ processed_data | safe }}
         </div>
-        <a href="{{ download_csv_path }}" class="btn btn-secondary mt-3" download>Download Full Sample (20 Customers)</a>
+        <a href="{{ download_csv_path }}" class="btn btn-secondary mt-3 btn-block" download>Download Full Sample (20 Customers)</a>
         {% endif %}
     </div>
 </body>
