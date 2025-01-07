@@ -75,10 +75,24 @@
 
         <!-- File Upload Form -->
         <form method="POST" enctype="multipart/form-data" class="mt-4">
+            <!-- Customers Dataset -->
             <div class="form-group">
-                <label for="csv_file">Upload Transaction Data (CSV):</label>
-                <input type="file" name="csv_file" id="csv_file" class="form-control-file" accept=".csv" required>
+                <label for="customers_file">Upload Customers Dataset (CSV):</label>
+                <input type="file" name="customers_file" id="customers_file" class="form-control-file" accept=".csv" required>
             </div>
+
+            <!-- Payments Dataset -->
+            <div class="form-group">
+                <label for="payments_file">Upload Payments Dataset (CSV):</label>
+                <input type="file" name="payments_file" id="payments_file" class="form-control-file" accept=".csv" required>
+            </div>
+
+            <!-- Orders Dataset -->
+            <div class="form-group">
+                <label for="orders_file">Upload Orders Dataset (CSV):</label>
+                <input type="file" name="orders_file" id="orders_file" class="form-control-file" accept=".csv" required>
+            </div>
+
             <button type="submit" class="btn btn-primary btn-block">Generate RFM</button>
         </form>
 
@@ -92,12 +106,26 @@
         </div>
         {% endif %}
 
-        <!-- RFM Results -->
+        <!-- RFM Results with customer_id -->
         {% if rfm_data %}
-        <h3 class="mt-5">RFM Dataset</h3>
+        <h3 class="mt-5">RFM Dataset (with Customer ID)</h3>
         <div class="table-responsive">
             {{ rfm_data | safe }}
         </div>
+        {% endif %}
+
+        <!-- RFM Results without customer_id -->
+        {% if rfm_no_id_data %}
+        <h3 class="mt-5">RFM Dataset (without Customer ID)</h3>
+        <div class="table-responsive">
+            {{ rfm_no_id_data | safe }}
+        </div>
+        {% endif %}
+
+
+        <!-- Download Link -->
+        {% if download_csv_path %}
+        <a href="{{ download_csv_path }}" class="btn btn-primary btn-block mt-3">Download RFM Dataset</a>
         {% endif %}
     </div>
 </body>

@@ -52,36 +52,59 @@ def segmentation():
             cluster_labels = kmeans.predict(features_scaled)
             df_rfm_cleaned["segments"] = cluster_labels
 
+            # Map segment labels
+            segment_labels = {
+                0: "Average Customers",
+                1: "High-Spending Infrequent Customers",
+                2: "Inactive Customers",
+                3: "Loyal and Active Customers"
+            }
+            df_rfm_cleaned["segment_label"] = df_rfm_cleaned["segments"].map(segment_labels)
+
             # Perform cluster analysis
             numeric_columns = df_rfm_cleaned.select_dtypes(include=["number"]).columns
             cluster_analysis = (
-                df_rfm_cleaned.groupby("segments")[numeric_columns]
+                df_rfm_cleaned.groupby("segment_label")[numeric_columns]
                 .mean()
                 .to_html(classes="table table-striped")
             )
 
+            # Generate pie chart without direct labels
             # Generate pie chart for segment percentages
             segment_counts = df_rfm_cleaned["segments"].value_counts()
             segment_percentages = (segment_counts / segment_counts.sum()) * 100
 
+            # Create legend labels combining cluster number and description
+            legend_labels = [f"Cluster {cluster}: {label}" for cluster, label in segment_labels.items()]
+
             plt.figure(figsize=(8, 8))
+
             plt.pie(
                 segment_percentages,
-                labels=segment_counts.index,
+                labels=None,  # Avoid cluttering the pie chart with labels
                 autopct='%1.1f%%',
                 startangle=140,
                 colors=sns.color_palette("viridis", len(segment_counts)),
             )
+
+            # Add title
             plt.title("Clustered Segments by Percentage", fontsize=16)
+
+            # Add legend
+            plt.legend(legend_labels, title="Segments", loc="center left", bbox_to_anchor=(1, 0.5))
+
+            # Adjust layout for better spacing
             plt.tight_layout()
 
+            # Show the plot
+            plt.show()
             # Save pie chart
             pie_chart_path = os.path.join(app.config["UPLOAD_FOLDER"], "cluster_pie_chart.png")
             plt.savefig(pie_chart_path)
             plt.close()
 
             # Select 20 random customers and prepare for download
-            sample_customers = df_rfm_cleaned.sample(n=20, random_state=42)[["customer_id", "segments"]]
+            sample_customers = df_rfm_cleaned.sample(n=20, random_state=42)[["customer_id", "segments", "segment_label"]]
             download_csv_path = os.path.join(app.config["UPLOAD_FOLDER"], "sample_customers.csv")
             sample_customers.to_csv(download_csv_path, index=False)
 
@@ -211,6 +234,7 @@ def rfm():
             columns_to_drop = ["order_status", "order_purchase_timestamp"]
             df_full = df_complete.drop(columns=[col for col in columns_to_drop if col in df_complete.columns])
 
+
             # Calculate Recency
             max_date = df_full["order_approved_at"].max()
             recency_df = df_full.groupby("customer_id")["order_approved_at"].max().reset_index()
@@ -221,8 +245,8 @@ def rfm():
             frequency_df = frequency_df.rename(columns={"order_id": "frequency"})
 
             # Calculate Monetary Value
-            monetary_df = df_full.groupby("customer_id")["payment_value"].sum().reset_index()
-            monetary_df = monetary_df.rename(columns={"payment_value": "monetary"})
+            monetary_df = df_full.groupby("customer_id")["payment_value"].mean().reset_index()
+            monetary_df = monetary_df.rename(columns={"payment_value": "monetery"})
 
             # Merge Recency, Frequency, and Monetary dataframes
             rfm_df = recency_df.merge(frequency_df, on="customer_id").merge(monetary_df, on="customer_id")
