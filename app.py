@@ -27,7 +27,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 def home():
     return render_template("home.html")
 
-#Segmentation
+#segmentation
 @app.route("/segmentation", methods=["GET", "POST"])
 def segmentation():
     if request.method == "POST":
@@ -69,35 +69,34 @@ def segmentation():
                 .to_html(classes="table table-striped")
             )
 
-            # Generate pie chart without direct labels
+            # Define actions table for segments
+            actions = [
+                {"Segment": "Loyal and Active Customers", "Action": "Implement loyalty programs, exclusive previews, and suggest complementary products."},
+                {"Segment": "High-Spending Infrequent Customers", "Action": "Send reminders, offer subscription models, and run retargeting campaigns."},
+                {"Segment": "Average Customers", "Action": "Highlight discounts, bundles, and create urgency with flash sales."},
+                {"Segment": "Inactive Customers", "Action": "Win-back campaigns with discounts and analyze reasons for inactivity."}
+            ]
+            actions_table = pd.DataFrame(actions).to_html(classes="table table-striped", index=False)
+
             # Generate pie chart for segment percentages
             segment_counts = df_rfm_cleaned["segments"].value_counts()
             segment_percentages = (segment_counts / segment_counts.sum()) * 100
 
-            # Create legend labels combining cluster number and description
             legend_labels = [f"Cluster {cluster}: {label}" for cluster, label in segment_labels.items()]
 
             plt.figure(figsize=(8, 8))
-
             plt.pie(
                 segment_percentages,
-                labels=None,  # Avoid cluttering the pie chart with labels
+                labels=segment_counts.index,
                 autopct='%1.1f%%',
                 startangle=140,
                 colors=sns.color_palette("viridis", len(segment_counts)),
             )
-
-            # Add title
             plt.title("Clustered Segments by Percentage", fontsize=16)
-
             # Add legend
             plt.legend(legend_labels, title="Segments", loc="center left", bbox_to_anchor=(1, 0.5))
-
-            # Adjust layout for better spacing
             plt.tight_layout()
 
-            # Show the plot
-            plt.show()
             # Save pie chart
             pie_chart_path = os.path.join(app.config["UPLOAD_FOLDER"], "cluster_pie_chart.png")
             plt.savefig(pie_chart_path)
@@ -118,10 +117,12 @@ def segmentation():
                 processed_data=display_customers.to_html(classes="table table-striped", index=False),
                 download_csv_path="static/sample_customers.csv",
                 pie_chart="static/cluster_pie_chart.png",
+                actions_table=actions_table
             )
         except Exception as e:
             return render_template("segmentation.html", error=f"An error occurred: {str(e)}")
 
+    # Handle the GET request
     return render_template("segmentation.html")
 
 
@@ -234,7 +235,6 @@ def rfm():
             columns_to_drop = ["order_status", "order_purchase_timestamp"]
             df_full = df_complete.drop(columns=[col for col in columns_to_drop if col in df_complete.columns])
 
-
             # Calculate Recency
             max_date = df_full["order_approved_at"].max()
             recency_df = df_full.groupby("customer_id")["order_approved_at"].max().reset_index()
@@ -245,8 +245,8 @@ def rfm():
             frequency_df = frequency_df.rename(columns={"order_id": "frequency"})
 
             # Calculate Monetary Value
-            monetary_df = df_full.groupby("customer_id")["payment_value"].mean().reset_index()
-            monetary_df = monetary_df.rename(columns={"payment_value": "monetery"})
+            monetary_df = df_full.groupby("customer_id")["payment_value"].sum().reset_index()
+            monetary_df = monetary_df.rename(columns={"payment_value": "monetary"})
 
             # Merge Recency, Frequency, and Monetary dataframes
             rfm_df = recency_df.merge(frequency_df, on="customer_id").merge(monetary_df, on="customer_id")

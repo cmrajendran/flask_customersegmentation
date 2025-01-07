@@ -63,6 +63,9 @@
             border-radius: 5px;
             padding: 10px;
         }
+        .table th {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -101,6 +104,14 @@
         <h3 class="mt-5">Clustering Analysis</h3>
         <div class="table-responsive">
             {{ cluster_analysis | safe }}
+        </div>
+        {% endif %}
+
+        <!-- Recommended Actions -->
+        {% if actions_table %}
+        <h3 class="mt-5">Recommended Actions for Each Segment</h3>
+        <div class="table-responsive">
+            {{ actions_table | safe }}
         </div>
         {% endif %}
 
